@@ -1,0 +1,24 @@
+name: synthea-generation-actions-workflow
+
+on: push
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - run: curl.exe https://github.com/synthetichealth/synthea/releases/download/master-branch-latest/synthea-with-dependencies.jar -L -O -J
+        shell: cmd
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt-hotspot' # See 'Supported distributions' for available options
+          java-version: '8'
+          
+      - run: java -jar synthea-with-dependencies.jar Massachusetts -c config.properties
+      
+      - uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: output/
